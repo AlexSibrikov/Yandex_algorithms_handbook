@@ -1,2 +1,8 @@
 # Yandex_algorithms_handbook
-Welcome. The repo contains my own solutions in C++ for problems from the Yandex handbook on algorithms. I’m sharing solutions, maybe this will allow you to improve your code. I am also confident that my solutions can be optimized, I am looking for ideas to improve my code.
+Welcome. This repo contains my own solutions in C++ for problems from the Yandex handbook on algorithms. Use is intended for educational purposes. Maybe this will help you to find ideas or to optimize your code. I am also confident that my solutions are far from the ideal and can be optimized, will be appreciate for ideas for my code improvement.
+
+Original handbook located here:
+https://education.yandex.ru/handbook/algorithms
+
+List of problems with solutions mark
+
