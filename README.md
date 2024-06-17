@@ -5,4 +5,5 @@ Original handbook located here:
 https://education.yandex.ru/handbook/algorithms
 
 List of problems with solutions mark
+https://github.com/AlexSibrikov/Yandex_algorithms_handbook/wiki/List-of-problems
 
