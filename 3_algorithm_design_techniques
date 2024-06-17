@@ -1,0 +1,712 @@
+// 3.1.А
+// https://new.contest.yandex.ru/48556/problem?id=215/2023_04_06/xAmHQ1PYv2
+
+#include <iostream>
+#include <utility>
+#include <algorithm>
+
+using namespace std;
+
+void generate_permutations(int n, std::vector<int>& permutation) { // генерация всех возможных перестановок рекурсией
+    if (permutation.size() == static_cast<size_t>(n)) {
+        for (int num : permutation) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+        return;
+    }
+
+    for (int i = 1; i <= n; ++i) {
+        if (std::find(permutation.begin(), permutation.end(), i) == permutation.end()) {
+            permutation.push_back(i);
+            generate_permutations(n, permutation);
+            permutation.pop_back();
+        }
+    }
+}
+
+
+int main() {
+    int n;
+    cin >> n;
+
+    int cnt = 1;
+
+    for (int i = 1; i <= n; ++i) {
+        cnt *= i;
+    }
+
+    cout << cnt << endl;
+
+    // генерация всех возможных перестановок и вывод на экран
+    // vector<int> vec;
+    // generate_permutations(n, vec);
+
+}
+
+
+// 3.1.B
+// https://new.contest.yandex.ru/48556/problem?id=215/2023_04_06/yrA534pVxW
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+void generatePermutationsMK(int m, int k, int cnt, vector<int>& vec) {
+    if (vec.size() == k) {
+        for(int i = 0; i < k; ++i) {
+            cout << vec[i] << ' ';
+            }
+        return;
+    }
+
+    for(int i = cnt; i <= m; ++i) {
+        if(find(vec.begin(), vec.end(), i) == vec.end()){
+            vec.push_back(i);
+            generatePermutationsMK(m, k, ++cnt, vec);
+            vec.pop_back();
+        }
+    }
+}
+
+int main() {
+    int m, k;
+
+    cin >> m >> k;
+
+    int cnt = 1;
+
+    int kk = 1, mk = 1;
+
+    for(int i = 1; i <= m; ++i) {
+        cnt *= i;
+    }
+
+    for(int i = 1; i <= k; ++i) {
+        kk *= i;
+    }
+
+    for(int i = 1; i <= m - k; ++i) {
+        mk *= i;
+    }
+
+    cout << cnt / (kk * mk) << endl;
+
+    vector<int> vec;
+    int start = 1; 
+
+    // генерация сочетаний
+    // generatePermutationsMK(m, k, start, vec);
+}
+
+//3.1.C
+//https://new.contest.yandex.ru/48556/problem?id=215/2023_04_06/WoW7IdbfFr
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n, k;
+
+    cin >> n >> k;
+
+    int nk = 1, nn = 1, kk = 1;
+
+    for(int i = 1; i <= n + k - 1; ++i) {
+        nk *= i;
+    }
+
+    for(int i = 1; i <= n - 1; ++i) {
+        nn *= i;
+    }
+
+    for(int i = 1; i <= k; ++i) {
+        kk *= i;
+    }
+
+    cout << nk / (nn * kk) << endl;
+}
+
+//3.2.A
+//https://new.contest.yandex.ru/48557/problem?id=215/2023_04_06/RdGbbmsLQn
+
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+bool compareVect (vector <int> v1, vector <int> v2) {
+    return (v1[1] < v2[1]);
+}
+
+int countNonOverlap (vector <vector<int> > vect) {
+    int maxNonOverlap = 0;
+    int min = 0;
+    sort(vect.begin(), vect.end(), compareVect);
+    for (auto v : vect) {
+        if (v[0] > min) {
+            ++maxNonOverlap;
+            min = v[1];
+        }
+    }
+    return maxNonOverlap;
+}
+
+int main () {
+    size_t n;
+    cin >> n;
+    vector<vector <int> > myVect(n, vector<int>(2));
+    for (size_t i = 0; i != n; ++i){
+        cin >> myVect[i][0] >> myVect[i][1];
+    }
+    cout << countNonOverlap(myVect) << endl;
+    return 0;
+}
+
+3.3.A Задача камни
+//https://new.contest.yandex.ru/48558/problem?id=215/2023_04_06/lX20wNIqZg
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    if (n%2 == 0 && m%2 == 0) {
+        cout << "Loose";
+    }
+    else {
+        cout << "Win";
+    }
+    return 0;
+}
+
+3.3.B Задача Камни 2
+// https://new.contest.yandex.ru/48558/problem?id=215/2023_04_06/HFqqJtCCRh
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string Rocs2 (int n, int m) {
+    if (n == m) {
+        return "Loose";
+    }
+    else if ((n > m) && ((n-m)%3 == 0) || (n < m) && ((m - n)%3 == 0)) {
+        return "Loose";
+    }
+    else {
+        return "Win";
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    cout << Rocs2(n , m) << endl;
+    return 0;
+}
+
+3.4.A Задача о Ханойских башнях 3 стержня
+// https://new.contest.yandex.ru/48568/problem?id=215/2023_04_06/DEEgnJVwi3
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void hanoi (int n, int source, int auxiliary, int target, vector<pair<int, int>>& result) {
+    if (n != 0) {
+        hanoi (n-1, source, target, auxiliary, result);
+        result.push_back({source, target});
+        hanoi (n-1, auxiliary, source, target, result);
+    }
+}
+
+
+int main () {
+    int k;
+    cin >> k;
+    vector<pair<int,int>> result;
+    hanoi (k, 1, 2, 3, result);
+    cout << result.size() << '\n';
+    for (auto row: result) {
+        cout << row.first << ' ' << row.second << endl;
+    }
+    return 0;
+}
+
+3.4.B Ханойские башни 4 стержня
+//https://new.contest.yandex.ru/48568/problem?id=215/2023_04_06/NQ3L2sn9W8
+
+Задача о ханойских башнях с 4мя стержнями. За основу взят алгоритм Фрейма-Стюарта
+
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int han4 (int n, int r) {
+    int k = n - round(sqrt(2 * n + 1)) + 1;
+
+    if (n == 1) {
+        return 1;
+    }
+    if (r == 3) {
+        return pow(2, n) - 1;
+    }
+    return 2 * han4(k, r) + han4(n - k, r - 1);
+}
+
+int main () {
+    int n;
+    cin >> n;
+    cout << han4(n, 4) << endl;
+}
+
+3.5.А Сортировка выбором
+// https://new.contest.yandex.ru/48569/problem?id=215/2023_04_06/08fmDTMXQZ
+
+#include <iostream>
+#include <vector>
+#include <utility>
+
+using namespace std;
+
+vector<int> merge(vector<int>& one, vector<int>& two) {
+    vector<int> result;
+    int size = one.size() + two.size();
+    result.reserve(size);
+
+    int i = 0, j = 0;
+
+    if(!one.empty() && !two.empty()) {
+        while(i + j < size - 1) {
+            if(one[i] <= two[j] && i < one.size()) {
+                result.push_back(one[i]);
+                ++i;
+            }
+            else if (j < two.size()) {
+                result.push_back(two[j]);
+                ++j;
+            }
+        }
+    }
+
+    if (!one.empty() && i < one.size()) {
+        result.insert(result.end(), one.begin() + i, one.end());
+    }
+    else if (!two.empty() && j < two.size()) {
+        result.insert(result.end(), two.begin() + j, two.end());
+    }
+    return result;
+}
+
+std::vector<int> mergeSortedArrays(const std::vector<int>& arr1, const std::vector<int>& arr2) {
+    std::vector<int> merged;
+    int i = 0, j = 0;
+
+    if(!arr1.empty() && !arr2.empty()) {
+        while (i < arr1.size() && j < arr2.size()) {
+            if (arr1[i] < arr2[j]) {
+                merged.push_back(arr1[i]);
+                i++;
+            } else {
+                merged.push_back(arr2[j]);
+                j++;
+            }
+        }
+    }
+
+    // Добавляем оставшиеся элементы, если такие есть
+    while (i < arr1.size()) {
+        merged.push_back(arr1[i]);
+        i++;
+    }
+    while (j < arr2.size()) {
+        merged.push_back(arr2[j]);
+        j++;
+    }
+
+    return merged;
+}
+
+void SelectionSort(vector<int>& vec, int n) {
+    int min = 0;
+    int k = 1;
+    for (int j = 0; j < n; ++j) {
+        for (int i = k; i < n; ++i) {
+            if (vec[min] > vec[i]) {
+                min = i;
+            }
+        }
+        swap(vec[min], vec[j]);
+        ++k;
+        min = k-1;
+    }
+}
+
+int main() {
+    int n, size = 0;
+    cin >> n;
+
+    vector<vector<int>> data(n, vector<int>(0));
+
+    for(int i = 0; i < n; ++i) {
+        int m;
+        size += m;
+        cin >> m;
+        data[i].resize(m);
+        for(int j = 0; j < m; ++j) {
+            int k;
+            cin >> k;
+            data[i][j] = k;
+        }
+    }
+
+    for(int i = 0; i < n; ++i) {
+        SelectionSort(data[i], data[i].size());
+    }
+
+    vector<int> result;
+
+    for(int i = 0; i < n; ++i) {
+        result = mergeSortedArrays(result, data[i]);
+    }
+
+    for (int e: result) {
+        cout << e << ' ';
+    }
+    cout << endl;
+}
+
+3.5.В Слияние сортированных последовательностей
+//https://new.contest.yandex.ru/48569/problem?id=215/2023_04_06/RRehKswGis
+
+#include <iostream>
+#include <vector>
+#include <utility>
+
+using namespace std;
+
+vector<int> merge(vector<int>& one, vector<int>& two) {
+    vector<int> result;
+    int size = one.size() + two.size();
+    result.reserve(size);
+
+    int i = 0, j = 0;
+
+    if(!one.empty() && !two.empty()) {
+        while(i + j < size - 1) {
+            if(one[i] <= two[j] && i < one.size()) {
+                result.push_back(one[i]);
+                ++i;
+            }
+            else if (j < two.size()) {
+                result.push_back(two[j]);
+                ++j;
+            }
+        }
+    }
+
+    if (!one.empty() && i < one.size()) {
+        result.insert(result.end(), one.begin() + i, one.end());
+    }
+    else if (!two.empty() && j < two.size()) {
+        result.insert(result.end(), two.begin() + j, two.end());
+    }
+    return result;
+}
+
+std::vector<int> mergeSortedArrays(const std::vector<int>& arr1, const std::vector<int>& arr2) {
+    std::vector<int> merged;
+    int i = 0, j = 0;
+
+    if(!arr1.empty() && !arr2.empty()) {
+        while (i < arr1.size() && j < arr2.size()) {
+            if (arr1[i] < arr2[j]) {
+                merged.push_back(arr1[i]);
+                i++;
+            } else {
+                merged.push_back(arr2[j]);
+                j++;
+            }
+        }
+    }
+
+    // Добавляем оставшиеся элементы, если такие есть
+    while (i < arr1.size()) {
+        merged.push_back(arr1[i]);
+        i++;
+    }
+    while (j < arr2.size()) {
+        merged.push_back(arr2[j]);
+        j++;
+    }
+
+    return merged;
+}
+
+void SelectionSort(vector<int>& vec, int n) {
+    int min = 0;
+    int k = 1;
+    for (int j = 0; j < n; ++j) {
+        for (int i = k; i < n; ++i) {
+            if (vec[min] > vec[i]) {
+                min = i;
+            }
+        }
+        swap(vec[min], vec[j]);
+        ++k;
+        min = k-1;
+    }
+}
+
+int main() {
+    int n, size = 0;
+    cin >> n;
+
+    vector<vector<int>> data(n, vector<int>(0));
+
+    for(int i = 0; i < n; ++i) {
+        int m;
+        size += m;
+        cin >> m;
+        data[i].resize(m);
+        for(int j = 0; j < m; ++j) {
+            int k;
+            cin >> k;
+            data[i][j] = k;
+        }
+    }
+
+    for(int i = 0; i < n; ++i) {
+        SelectionSort(data[i], data[i].size());
+    }
+
+    vector<int> result;
+
+    for(int i = 0; i < n; ++i) {
+        result = mergeSortedArrays(result, data[i]);
+    }
+
+    for (int e: result) {
+        cout << e << ' ';
+    }
+    cout << endl;
+}
+
+3.5.С Сортировка слиянием
+//https://new.contest.yandex.ru/48569/problem?id=215/2023_04_06/xwt1i1wLpb
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> Merge(vector<int>& one, vector<int> two) {
+    vector<int> SortedList;
+    size_t i = 0, j = 0;
+    while (i + j < one.size() + two.size() - 1) {
+        if (one[i] < two[j] && i < one.size()) {
+            SortedList.push_back(one[i]);
+            ++i;
+        }
+        else {
+            if (j < two.size())
+                SortedList.push_back(two[j]);
+            ++j;
+        }
+    }
+
+    if (i < one.size()) {
+        for (; i < one.size(); ++i) {
+            SortedList.push_back(one[i]);
+        }
+    }
+    else if (j < two.size()) {
+        for (; j < two.size(); ++j) {
+            SortedList.push_back(two[j]);
+        }        
+    }
+    return SortedList;
+}
+
+
+vector<int> MergeSort(vector<int>& input) {
+    if (input.size() == 1) {
+        return input;
+    }
+    size_t size = input.size()/2;
+    vector<int>::iterator middle_iter = input.begin() + (input.end() - input.begin())/2;
+    vector<int> FirstHalf(input.begin(), middle_iter);
+    vector<int> SecondHalf(middle_iter, input.end());
+    vector<int> SortedFirstHalf = MergeSort(FirstHalf);
+    vector<int> SortedSecondHalf = MergeSort(SecondHalf);
+    vector<int> SortedRes = Merge(SortedFirstHalf, SortedSecondHalf);
+    return SortedRes;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> vec;
+    vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        int e;
+        cin >> e;
+        vec.push_back(e);
+    }
+    vector<int> sorted = MergeSort(vec);
+    bool is_first = true;
+    for(auto e: sorted) {
+        if (is_first) {
+            cout << e;
+            is_first = false;
+        }
+        else {
+            cout << ' ' << e;
+        }
+    }
+}
+
+3.6.А Разбиение Ломуто
+// https://new.contest.yandex.ru/48570/problem?id=215/2023_04_06/onaxya4yqZ
+
+#include <iostream>
+#include <vector>
+#include <utility>
+
+using namespace std;
+
+vector<int> lomuto (vector<int>& vec) {
+    if (vec.size() == 1) {
+        return vec;
+    }
+
+    int pivot = vec[0];
+    vector<int> vl, vr, result;
+    for (size_t i = 1; i < vec.size(); ++i) {
+        if (vec[i] <= pivot) {
+            vl.push_back(vec[i]);
+        }
+        else {
+            vr.push_back(vec[i]);
+        }
+    }
+    result.push_back(pivot);
+    for(auto e: vl) {
+        result.push_back(e);
+    }
+    swap(result[0], result[result.size()-1]);
+    for(auto e: vr) {
+        result.push_back(e);
+    }
+    return result;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> vec, res;
+    vec.reserve(n);
+    for(size_t i = 0; i < n; ++i) {
+        int e;
+        cin >> e;
+        vec.push_back(e);
+    }
+    res = lomuto(vec);
+    bool is_first = true;
+    for(auto e: res) {
+        if (is_first) {
+            cout << e;
+            is_first = false;
+        }
+        else {
+            cout << ' ' << e;
+        }
+    }
+    cout << endl;
+}
+
+3.6.В Быстрая сортировка
+// https://new.contest.yandex.ru/48570/problem?id=215/2023_04_06/qQS9a7rB0y
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int medianOfThree(std::vector<int>& arr, int low, int high) {
+    int mid = low + (high - low) / 2;
+    if (arr[low] > arr[mid]) {
+        if (arr[mid] > arr[high])
+            return mid;
+        else if (arr[low] > arr[high])
+            return high;
+        else
+            return low;
+    } else {
+        if (arr[low] > arr[high])
+            return low;
+        else if (arr[mid] > arr[high])
+            return high;
+        else
+            return mid;
+    }
+}
+
+int Partition(vector<int>& vec, int low, int high) {
+    int pivotIndex = medianOfThree(vec, low, high);
+    int pivotValue = vec[pivotIndex];
+    int i = low - 1;
+
+    swap(vec[pivotIndex], vec[high]);
+
+    for(int j = low; j < high; ++j) {
+        if (vec[j] <= pivotValue) {
+            ++i;
+            swap(vec[i], vec[j]);
+        }
+    }
+    swap(vec[i+1], vec[high]);
+    return (i + 1);
+}
+
+void QuickSort(vector<int>& vec, int low, int high) {
+    if (low < high) {
+        int pi = Partition(vec, low, high);
+
+        QuickSort(vec, low, pi - 1);
+        QuickSort(vec, pi + 1, high);
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> vec;
+    vec.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        int e;
+        cin >> e;
+        vec.push_back(e);
+    }
+    QuickSort(vec, 0, n-1);
+    bool is_first = true;
+    for(int e: vec) {
+        if (is_first) {
+            cout << e;
+            is_first = false;
+        }
+        else {
+            cout << ' ' << e;
+        }
+    }
+}
+
