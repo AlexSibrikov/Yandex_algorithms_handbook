@@ -1,0 +1,328 @@
+9.1. Односвязный список
+9.1.A. Выполнение операций со списком
+
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> data, ans;
+
+    for (int i = 0; i < n; ++i) {
+        int op, ind, val;
+        cin >> op >> ind;
+        if(op == 1) {
+            cin >> val;
+                data.insert(data.begin() + ind, val);
+        }
+        else if(op == 2) {
+            ans.push_back(data[ind - 1]);
+        }
+        else {
+            data.erase(data.begin() + ind - 1);
+        }
+    }
+
+    for(auto e: ans) {
+        cout << e << endl;
+    }
+}
+
+9.1.B. Перепад цен
+
+9.2. Множество
+9.2.A. Выполнение операций с множеством
+
+#include <set>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    set<int> data;
+    vector<bool> ans;
+
+    for(int i = 0; i < n; ++i) {
+        int cmd, val;
+        cin >> cmd >> val;
+        if(cmd == 1) {
+            data.insert(val);
+        }
+        else if (cmd == 2) {
+            if(data.find(val) != data.end()){
+                ans.push_back(true);
+            }
+            else {
+                ans.push_back(false);
+            }
+        }
+    }
+
+    for(auto e: ans) {
+        cout << e << endl;
+    }
+}
+
+9.2.B. Похожие названия
+// Решение не проходит все тесты чекера Яндекса. Найти ошибку не получилось, публикую как есть с прицелом на улучшение в дальнейшем
+
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
+
+using namespace std;
+
+// Функция для подсчета количества интересных пар
+int countInterestingPairs(const vector<string>& words) {
+    unordered_map<string, int> maskCount;
+    unordered_set<string> uniqueWords(words.begin(), words.end());
+    
+    // Проходим по каждому уникальному слову
+    for (const auto& word : uniqueWords) {
+        int length = word.length();
+        // Генерируем все маски для текущего слова
+        for (int i = 0; i < length; ++i) {
+            string mask = word;
+            mask[i] = '*'; // Замена символа на '*'
+            maskCount[mask]++;
+        }
+    }
+    
+    // Считаем количество интересных пар
+    int interestingPairs = 0;
+    for (const auto& entry : maskCount) {
+        int count = entry.second;
+        if (count > 1) {
+            interestingPairs += count * (count - 1) / 2;
+        }
+    }
+    
+    return interestingPairs;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<string> words(n);
+    
+    for (int i = 0; i < n; ++i) {
+        cin >> words[i];
+    }
+    
+    int result = countInterestingPairs(words);
+    cout << result << endl;
+    
+    return 0;
+}
+
+9.3. Словарь
+9.3.A. Выполнение операций со словарем
+
+#include <iostream>
+#include <map>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    map<int, int> data;
+    vector<int> ans;
+
+    for(int i = 0; i < n; ++i) {
+        int cmd, key;
+        cin >> cmd >> key;
+        if(cmd == 1) {
+            cin >> data[key];
+        }
+        else if (cmd == 2) {
+            ans.push_back((data.find(key) == data.end())? -1: data[key]);
+        }
+    }
+
+    for(int e: ans) {
+        cout << e << endl;
+    }
+}
+
+9.4. Стек
+9.4.A. Выполнение операций со стеком
+
+#include <stack>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    stack<int> data;
+    vector<int> ans;
+
+    for(int i = 0; i < n; ++i) {
+        int cmd, val;
+        cin >> cmd;
+        if(cmd == 1) {
+            cin >> val;
+            data.push(val);
+            ans.push_back(data.top());
+        }
+        else if (cmd == 2) {
+            data.pop();
+            if(!data.empty()) {
+                ans.push_back(data.top());
+            }
+            else {
+                ans.push_back(-1);
+            }
+        }
+    }
+
+    for(int e: ans) {
+        cout << e << endl;
+    }
+}
+
+9.4.B. Видимость влево
+
+#include <iostream>
+#include <stack>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> data(n);
+    vector<int> ans(n, 0); // Вектор для хранения результатов
+
+    for(int i = 0; i < n; ++i) {
+        cin >> data[i];
+    }
+
+    stack<int> s; // Стек для хранения индексов
+
+    for(int i = 0; i < n; ++i) {
+        // Удаляем элементы из стека, пока текущий элемент больше элементов на стеке
+        while(!s.empty() && data[i] > data[s.top()]) {
+            s.pop();
+        }
+
+        // Если стек не пустой, то расстояние до ближайшего элемента слева, который больше текущего
+        if (!s.empty()) {
+            ans[i] = i - s.top() - 1;
+        } else {
+            ans[i] = i; // Если стек пустой, то все предыдущие элементы меньше текущего
+        }
+
+        // Добавляем текущий индекс в стек
+        s.push(i);
+    }
+
+    for(int i = 0; i < n; ++i) {
+        cout << ans[i] << ' ';
+    }
+
+    return 0;
+}
+
+9.4.C. Сумма минимумов на отрезках
+
+#include <iostream>
+#include <deque>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+
+    deque<int> dq;
+    long long sum_min = 0;
+
+    for(int i = 0; i < n; ++i) {
+        if(!dq.empty() && dq.front() == i - k) {
+            dq.pop_front();
+        }
+
+        while(!dq.empty() && a[dq.back()] >= a[i]) {
+            dq.pop_back();
+        }
+
+        dq.push_back(i);
+
+        if(i >= k - 1) {
+            sum_min += a[dq.front()];
+        }
+    }
+
+    cout << sum_min << endl;
+
+}
+
+9.5. Очередь с приоритетом
+
+9.6. Дек
+9.6.A. Выполнение операций с очередью
+
+#include <deque>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    deque<int> data;
+    vector<int> ans;
+
+    for(int i = 0; i < n; ++i) {
+        int cmd, val;
+        cin >> cmd;
+        if(cmd == 1) {
+            cin >> val;
+            data.push_back(val);
+            ans.push_back(data.front());
+        }
+        else if (cmd == 2) {
+            if(!data.empty()) {
+                data.pop_front();
+            }
+            
+            if(data.empty()) {
+                ans.push_back(-1);
+            }
+            else {
+                ans.push_back(data.front());
+            }
+        }
+    }
+
+    for(int e: ans) {
+        cout << e << endl;
+    }
+}
