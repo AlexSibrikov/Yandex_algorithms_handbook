@@ -1,0 +1,63 @@
+
+
+4.2.A
+Задача A + B
+//https://new.contest.yandex.ru/42492/problem?id=215/2022_11_08/xe5ldZjyee
+
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    int x, y;
+    cin >> x >> y;
+    cout << x + y << endl;
+}
+
+4.2.B
+// Задача A(x) + B(x)
+//https://new.contest.yandex.ru/42492/problem?id=215/2022_11_08/r1Y2AFKOd5
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int a, b;
+    cin >> a;
+    vector<int> A(a + 1);
+    for(int i = a; i >= 0; --i) {
+        int ae;
+        cin >> ae;
+        A[i] = ae;
+    }
+    cin >> b;
+    vector<int> B(b + 1);
+    for(int i = b; i >= 0; --i) {
+        int ae;
+        cin >> ae;
+        B[i] = ae;
+    }
+    if(a >= b) {
+        cout << A.size() - 1 << endl;
+        for(int i = b; i >= 0 ; --i) {
+            A[i] += B[i];
+        }
+        for(int i = a; i >= 0; --i) {
+            cout << A[i] << ' ';
+        }
+        cout << endl; 
+    }
+    else {
+        cout << B.size() - 1 << endl;
+        for(int i = a; i >= 0 ; --i) {
+            B[i] += A[i];
+        }
+        for(int i = b; i >= 0; --i) {
+            cout << B[i] << ' ';
+        }
+        cout << endl; 
+    }
+}
+
