@@ -1,0 +1,333 @@
+5.1. Задачи о числах Фибоначчи
+
+5.1.A Числа Фибоначчи
+// https://new.contest.yandex.ru/47496/problem?id=215/2023_03_10/RBHWRbXpJK
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> memo; // для реализации мемоизации
+
+int fibo(int n) {
+    if(memo[n] != -1) {
+        return memo[n];
+    }
+    if(n <= 1) {
+        return n;
+    }
+    else {
+        memo[n] = fibo(n-1) + fibo(n-2);
+        return memo[n];
+    }
+    
+}
+
+int main() {
+    int n;
+    cin >> n;
+    memo.resize(n+1, -1);
+    cout << fibo(n);
+}
+
+5.1.B Последняя цифра числа Фибоначчи
+// https://new.contest.yandex.ru/47496/problem?id=215/2023_03_10/QRFPRBlJWb
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> memo;
+
+int fibo(int n) {
+    if(memo[n] != -1) {
+        return memo[n];
+    }
+    if(n <= 1) {
+        return n;
+    }
+    else {
+        memo[n] = (fibo(n-1) + fibo(n-2))%10;
+        return memo[n];
+    }
+    
+}
+
+int main() {
+    int n;
+    cin >> n;
+    memo.resize(n+1, -1);
+    cout << fibo(n);
+}
+
+5.1.C Огромное число Фибоначчи
+// https://new.contest.yandex.ru/47496/problem?id=215/2023_03_10/AH1EGu1ioL
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> memo;
+
+int fibo(unsigned long n, int m) {
+    if(memo[n] != -1) {
+        return memo[n] % m;
+    }
+    if (n <= 1) {
+        return n;
+    }
+    else {
+        memo[n] = fibo(n-1, m) % m + fibo(n-2, m) % m;
+        return memo[n] % m;
+    }
+}
+
+int PisanoPeriod(int m) {
+    int current = 0;
+    int next = 1;
+    int period = 0;
+    while(true) {
+        int oldnext = next;
+        next = (current + next) % m;
+        current = oldnext;
+        ++period;
+        if(current == 0 && next == 1) {
+            return period;
+        }
+    }
+}
+
+int main() {
+    unsigned long n;
+    int m;
+    cin >> n >> m;
+    int peroid = PisanoPeriod(m);
+
+    n %= peroid;
+
+    memo.resize(peroid, -1);
+
+//    cout << n << endl;
+    cout << fibo(n, m) << endl;
+}
+
+5.1.D Последняя цифра суммы чисел Фибоначчи
+// https://new.contest.yandex.ru/47496/problem?id=215/2023_03_10/L7uqmRjxML
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<unsigned long> memo;
+
+int fibo(unsigned long n, int m) {
+    if(memo[n] != -1) {
+        return memo[n] % m;
+    }
+    if (n <= 1) {
+        return n;
+    }
+    else {
+        memo[n] = fibo(n-1, m) % m + fibo(n-2, m) % m;
+        return memo[n] % m;
+    }
+}
+
+int pizanoPeriod(int m) {
+    int current = 0;
+    int next = 1;
+    int period = 0;
+    while(true) {
+        int oldNext = next;
+        next = (current + next)%m;
+        current = oldNext;
+        ++period;
+        if(current == 0 && next == 1) {
+            return period;
+        }
+    }
+}
+
+int main() {
+    unsigned long n;
+    cin >> n;
+    // cout << pizanoPeriod(10) << endl;
+
+    n %= pizanoPeriod(10);
+
+    // cout << n << endl;
+    memo.resize(n+1, -1);
+
+//    cout << fibo(n, 10);
+
+    int result = 0;
+
+    for(int i = 0; i <= n; ++i) {
+        result += fibo(i, 10);
+    }
+
+    result %= 10;
+    
+    cout << result << endl;
+}
+
+5.1.E Последняя цифра частичной суммы чисел Фибоначчи
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<unsigned long> memo;
+
+int fibo(unsigned long n, int m) {
+    if(memo[n] != -1) {
+        return memo[n] % m;
+    }
+    if (n <= 1) {
+        return n;
+    }
+    else {
+        memo[n] = fibo(n-1, m) % m + fibo(n-2, m) % m;
+        return memo[n] % m;
+    }
+}
+
+int pizanoPeriod(int m) {
+    int current = 0;
+    int next = 1;
+    int period = 0;
+    while(true) {
+        int oldNext = next;
+        next = (current + next)%m;
+        current = oldNext;
+        ++period;
+        if(current == 0 && next == 1) {
+            return period;
+        }
+    }
+}
+
+int main() {
+    long m, n, rep;
+    cin >> m >> n;
+
+    int pp = pizanoPeriod(10);
+
+    m %= pp;
+    n %= pp;
+
+    unsigned long result = 0;
+
+    memo.resize(pp, -1);
+
+    if (m <= n) {
+        for(int i = m; i <= n; ++i) {
+            result += fibo(i, 10);
+        }
+    }
+    else {
+        for(unsigned long i = m; i < pp; ++i) {
+            result += fibo(i, 10);
+        }
+        for(int i = 0; i <= n; ++i) {
+            result += fibo(i, 10);
+        }
+    }
+    result %= 10;
+    
+    cout << result << endl;
+}
+
+5.2 Вычисление НОК и НОД
+
+5.2.A Наибольший общий делитель
+// https://new.contest.yandex.ru/47560/problem?id=215/2023_03_10/KZcSK1ByA1
+
+#include <iostream>
+
+using namespace std;
+
+int gcd(int n, int m) {
+    while(n > 0 && m > 0) {
+        if(n >= m) {
+            n %= m;
+        }
+        else {
+            m %= n;
+        }
+    }
+    return(max(n, m));
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    cout << gcd(n, m) << endl;
+}
+
+5.2.B Наименьшее общее кратное
+// https://new.contest.yandex.ru/47560/problem?id=215/2023_03_10/3eKhxrkoGh
+
+#include <iostream>
+
+using namespace std;
+
+int gcd(int n, int m) {
+    while(n > 0 && m > 0) {
+        if(n >= m) {
+            n %= m;
+        }
+        else {
+            m %= n;
+        }
+    }
+    return(max(n, m));
+}
+
+int main() {
+    long n, m;
+    cin >> n >> m;
+
+    cout << (n * m) / gcd(n, m) << endl;
+}
+
+5.2.C Наибольшее число шагов алгоритма Евклида
+// https://new.contest.yandex.ru/47560/problem?id=215/2023_03_10/W0SDPqvbND
+#include <iostream>
+
+using namespace std;
+
+pair<int, int> gcd_rev(int n) {
+    if (n == 1) {
+        return {1, 1};
+    }
+    int a = 1, b = 0;
+    while(true) {
+        if(a + b <= n) {
+            if(a > b) {
+                b += a;
+            }
+            else {
+                a += b;
+            }
+        }
+        else {
+            return {min(a, b), max(a, b)};
+        }
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    auto ans = gcd_rev(n);
+
+    cout << ans.first << ' ' << ans.second << endl;
+}
