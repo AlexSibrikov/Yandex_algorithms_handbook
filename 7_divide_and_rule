@@ -1,0 +1,309 @@
+7.1. Двоичный поиск
+7.1.A Двоичный поиск
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n, q;
+    cin >> n;
+    vector<int> data(n);
+    for(int i = 0; i < n; ++i) {
+        int v;
+        cin >> v;
+        data[i] = v;
+    }
+
+    cin >> q;
+
+    int low = 1, top = n, mid;
+
+    while(low < top) {
+        mid = (top + low + 1) / 2;
+        if(q >= data[mid - 1]) {
+            low = mid;
+        }
+        else {
+            top = mid - 1;
+        }
+    } 
+
+    if(data[low - 1] != q) {
+        cout << "-1" << endl;
+    }
+    else {
+        cout << low - 1 << endl;
+    }
+}
+
+7.1.B Множественный поиск ключей в отсортированной последовательности
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int bi_search(vector<int> data, int q) {
+    int l = 1, r = data.size(), m;
+    while(l < r) {
+        m = (l + r + 1) / 2;
+        if(q >= data[m - 1]) {
+            l = m;
+        }
+        else {
+            r = m - 1;
+        }
+    }
+
+    if(data[l - 1] == q) {
+        return l - 1;
+    }
+    else {
+        return -1;
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> data(n);
+    for(int i = 0; i < n; ++i) {
+        int v;
+        cin >> v;
+        data[i] = v;
+    }
+
+    cin >> n;
+    vector<int> check(n);
+
+    for(int i = 0; i < n; ++i) {
+        int v;
+        cin >> v;
+        check[i] = v;
+    }
+
+    for(auto num: check) {
+        cout << bi_search(data, num) << endl;
+    }
+}
+
+7.1.C Подсчет количества вхождений элементов
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int bi_search_last(vector<int>& data, int q) {
+    int l = 1, r = data.size(), m;
+    while(l < r) {
+        m = (l + r + 1) / 2;
+        if(q >= data[m - 1]) {
+            l = m;
+        }
+        else {
+            r = m - 1;
+        }
+    }
+
+    if(data[l - 1] == q) {
+        return l - 1;
+    }
+    else {
+        return -1;
+    }
+}
+
+int bi_search_first(vector<int>& data, int q) {
+    int l = 1, r = data.size(), m;
+    while(l < r) {
+        m = (l + r) / 2;
+        if(q <= data[m-1]) {
+            r = m;
+        }
+        else {
+            l = m + 1;
+        }
+//        cout << l << ' ' << m << ' ' << r << endl;
+    }
+
+    if(data[l - 1] == q) {
+        return l - 1;
+    }
+    else {
+        return -1;
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> data(n);
+    for(int i = 0; i < n; ++i) {
+        int v;
+        cin >> v;
+        data[i] = v;
+    }
+
+    cin >> n;
+    vector<int> check(n);
+
+    for(int i = 0; i < n; ++i) {
+        int v;
+        cin >> v;
+        check[i] = v;
+    }
+
+    for(auto num: check) {
+//        cout << bi_search_first(data, num) << ' ' << bi_search_last(data, num);
+
+        int first = bi_search_first(data, num);
+
+        if(first == -1) {
+            cout << 0 << ' ';
+        }
+        else {
+            int last = bi_search_last(data, num);
+            cout << last - first + 1 << ' ';
+        }
+    }
+}
+
+7.1.D Минимальная длина покрывающих отрезков
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Функция для проверки возможности покрытия всех точек k отрезками длины len
+bool canCoverWithSegments(const vector<int>& points, int n, int k, int len) {
+    int usedSegments = 0;
+    int lastCovered = points[0] - 1; // Начальная точка, которая еще не покрыта
+
+    for (int i = 0; i < n; ++i) {
+        if (points[i] > lastCovered) {
+            ++usedSegments;
+            lastCovered = points[i] + len - 1;
+        }
+        if (usedSegments > k) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    vector<int> points(n);
+
+    for (int i = 0; i < n; ++i) {
+        cin >> points[i];
+    }
+
+    // Сортируем точки
+    sort(points.begin(), points.end());
+
+    // Инициализация границ для бинарного поиска
+    int left = 1;
+    int right = points[n-1] - points[0];
+
+    // Бинарный поиск
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (canCoverWithSegments(points, n, k, mid)) {
+            right = mid; // Пробуем найти меньшую длину
+        } else {
+            left = mid + 1; // Ищем длину побольше
+        }
+    }
+
+    cout << left - 1 << endl;
+
+    return 0;
+}
+
+7.2. Поиск доминирующего элемента
+7.2.A. Поиск доминирующего элемента
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> data(n), check;
+
+    for(int i = 0; i < n; ++i) {
+        cin >> data[i];
+        if(i%2 == 1 || i == n-1) {
+            if(data[i] == data[i-1]) {
+                check.push_back(data[i]);
+            }
+        }
+    }
+
+    int ans = 0;
+
+    for(auto c: check) {
+        int cnt = 0;
+//        cout << c << endl;
+        for(auto e: data) {
+            if(c == e) {
+                ++cnt;
+            }
+            if (cnt > n/2) {
+                ans = 1;
+                cout << ans << endl;
+                return 0;
+            }
+        }
+    }
+    cout << ans << endl;
+}
+
+7.2.B. Поиск трех доминирующих элементов
+
+#include <iostream>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    map<int, int> data;
+
+    for(int i = 0; i < n; ++i) {
+        int c;
+        cin >> c;
+        ++data[c];
+    }
+
+    int cnt = 0;
+
+    for(auto e: data) {
+        if(e.second > n/4) {
+            ++cnt;
+            if(cnt == 3) {
+                cout << 1 << endl;
+                return 0;
+            }
+        }
+    }
+
+    cout << 0 << endl;
+}
+
+7.3. Модификация быстрой сортировки
+
+7.4. Подсчёт инверсий
+
+7.5. Задача «Пара ближайших точек»
