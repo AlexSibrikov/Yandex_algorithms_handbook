@@ -1,0 +1,856 @@
+10.1. Природа графа
+
+10.2. Представление графа в памяти компьютера
+10.2.A. Граф из списка маршрутов
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> time(n, vector<int>(n, 0));
+    vector<vector<int>> transfers(n, vector<int>(n, 0));
+
+    for(int i = 0; i < m; ++i) {
+        int stops;
+        cin >> stops;
+        vector<int> data(stops);
+        for(int j = 0; j < stops; ++j) {
+            cin >> data[j];
+
+            if(j > 0) {
+                time[data[j] - 1][data[j-1] - 1] = 1;
+                time[data[j-1] - 1][data[j] - 1] = 1;
+            }
+        }
+
+        for(int j = 0; j < stops; ++j) {
+            for(int l = j + 1; l < stops; ++l) {
+                transfers[data[j] - 1][data[l]-1] = 1;
+                transfers[data[l]-1][data[j]-1] = 1;
+            }
+        }
+
+    }
+
+    for(int i = 0; i < n; ++i) {
+        for(int j = 0; j < n; ++j) {
+            if(j == 0) {
+                cout << time[i][j];
+            }
+            else {
+                cout << ' ' << time[i][j];
+            }
+        }
+        cout << endl;
+    }
+
+    for(int i = 0; i < n; ++i) {
+        for(int j = 0; j < n; ++j) {
+            if(j == 0) {
+                cout << transfers[i][j];
+            }
+            else {
+                cout << ' ' << transfers[i][j];
+            }
+        }
+        cout << endl;
+    }
+
+}
+
+10.2.B. Робот-пылесос
+
+#include <iostream>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+// Направления: вверх, право, вниз, лево
+const int DR[4] = {-1, 0, 1, 0};
+const int DC[4] = {0, 1, 0, -1};
+
+// Функция для поворота влево
+int turnLeft(int dir) {
+    return (dir + 3) % 4;
+}
+
+// Функция для поворота вправо
+int turnRight(int dir) {
+    return (dir + 1) % 4;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<string> room(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> room[i];
+    }
+
+    int r, c;
+    cin >> r >> c;
+
+    int q;
+    cin >> q;
+
+    string actions;
+    cin >> actions;
+
+    // Набор для хранения посещенных клеток
+    set<pair<int, int>> visited;
+
+    // Стартовая позиция
+    int x = r - 1, y = c - 1;
+    int dir = 0; // Изначально направлен вверх
+
+    visited.insert({x, y});
+
+    for (char action : actions) {
+        if (action == 'L') {
+            dir = turnLeft(dir);
+        } else if (action == 'R') {
+            dir = turnRight(dir);
+        } else if (action == 'M') {
+            int nx = x + DR[dir];
+            int ny = y + DC[dir];
+
+            // Проверка, что новое положение находится внутри комнаты и не является препятствием
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m && room[nx][ny] == '.') {
+                x = nx;
+                y = ny;
+                visited.insert({x, y});
+            }
+        }
+    }
+
+    cout << visited.size() << endl;
+
+    return 0;
+}
+
+10.3. Обходы графа
+10.3.A.Рейтинг в шахматном турнире
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#include <stack>
+
+using namespace std;
+
+void bfs(vector<vector <int>>& g, int v, vector <bool>& used, int& res){
+    queue<int> q;
+    q.push(v);
+    used[v] = true;
+    res++;
+    while (!q.empty()){
+        v = q.front();
+        q.pop();
+        for (auto to: g[v]){
+            if (!used[to]){
+                used[to] = true;
+                res++;
+                q.push(to);
+            }
+        }
+    }
+}
+
+void dfs(vector<vector <int>>& g, int v, vector <bool>& used, int& res){
+    stack<int> q;
+    q.push(v);
+    used[v] = true;
+    res++;
+    while (!q.empty()){
+        v = q.top();
+        q.pop();
+        for (auto to: g[v]){
+            if (!used[to]){
+                used[to] = true;
+                res++;
+                q.push(to);
+            }
+        }
+    }
+}
+
+int main() {
+    
+    int n, m;
+    int a, b, c, res;
+    cin >> n >> m;
+    vector <vector <int>> graph(n, vector <int>());
+    for (int i = 0; i < m; i++){
+        cin >> a >> b >> c;
+        if (c == 2){
+            graph[b - 1].push_back(a - 1);
+        } else if (c == 1) {
+            graph[a - 1].push_back(b - 1);
+        }
+    }
+    vector <int> ab(n);
+    for (int i = 0; i < n; i++) {
+        vector <bool> used(n, false);
+        res = 0;
+        dfs(graph, i, used, res);
+        ab[i] = res;
+    }
+    sort(ab.begin(), ab.end());
+    for (int i = 1; i <= n; i++) {
+        if (ab[i - 1] != i) {
+            cout << "NO";
+            return 0;
+        }
+    }
+    cout << "YES";
+}
+
+10.3.B.Минимальное количество арифметических операций
+
+#include <iostream>
+#include <queue>
+#include <unordered_set>
+
+using namespace std;
+
+int find_min(int x, int y) {
+    if( x == y) {
+        return 0;
+    }
+
+    queue<pair<int, int>> q;
+
+    q.push({x, 0});
+
+    unordered_set<int> visited;
+    visited.insert(x);
+
+    while(!q.empty()) {
+        int current = q.front().first;
+        int step = q.front().second;
+
+        q.pop();
+
+        for(int c = 0; c <= 9; ++c) {
+            int new_values[3] = {current + c, current - c, current * c};
+
+            for (int new_v: new_values) {
+                if(new_v == y) {
+                    return step + 1;
+                }
+                else {
+                    if (new_v >= 0 && new_v < 100001 && visited.find(new_v) == visited.end()) {
+                        visited.insert(new_v);
+                        q.push({new_v, step + 1});
+                    }
+                }
+            }
+        }
+
+    }
+    return -1;
+}
+
+int main() {
+    int x, y;
+    cin >> x >> y;
+
+    cout << find_min(x, y) << endl; 
+}
+
+10.3.C.Выход из лабиринта
+
+#include <iostream>
+#include <queue>
+#include <unordered_set>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Дирекции: вверх, право, вниз, лево
+const int DR[4] = {-1, 0, 1, 0};
+const int DC[4] = {0, 1, 0, -1};
+
+char moves[4] = {'U', 'R', 'D', 'L'};
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+
+    vector<string> lab(n);
+
+    for(int i = 0; i < n; ++i) {
+        cin >> lab[i];
+    }
+    
+    pair<int, int> start, finish;
+
+    for(int i = 0; i < n; ++i) {
+        for(int j = 0; j < m; ++j) {
+            if(lab[i][j] == 'F') {
+                finish = {i, j};
+            }
+            else if (lab[i][j] == 'S') {
+                start = {i, j};
+            }
+        }
+    }
+
+    if(finish == start) {
+        return 0;
+    }
+
+    vector<vector<int>> dist(n, vector<int>(m, -1));
+    vector<vector<pair<int, int>>> parents(n, vector<pair<int, int>>(m, {-1, -1}));
+
+    dist[start.first][start.second] = 0;
+
+    queue<pair<int, int>> q;
+    q.push(start);
+
+    while(!q.empty()) {
+        pair<int, int> curr = q.front();
+
+        q.pop();
+
+        for(int i = 0; i < 4; ++i) {
+            int nr = curr.first + DR[i];
+            int nc = curr.second + DC[i];
+
+            if(nr >= 0 && nr < n && nc >= 0 && nc < m && lab[nr][nc] != '#' && dist[nr][nc] == -1) {
+                q.push({nr, nc});
+                dist[nr][nc] = dist[curr.first][curr.second] + 1;
+                parents[nr][nc] = curr;
+            }
+        }
+        
+    }
+
+    if (dist[finish.first][finish.second] == -1) {
+        cout << -1 << endl;
+    }
+    else {
+        cout << dist[finish.first][finish.second] << endl;
+
+        string path;
+        pair<int, int> cur = finish;
+        while(cur != start) {
+            pair<int, int> prev = parents[cur.first][cur.second];
+            for(int i = 0; i < 4; ++i) {
+                if(prev.first + DR[i] == cur.first && prev.second + DC[i] == cur.second) {
+                    path += moves[i];
+                    break;
+                }
+            }
+            cur = prev;
+        }
+
+        reverse(path.begin(), path.end());
+        cout << path << endl; 
+
+    }
+}
+
+10.3.D.Выход из лабиринта: один ключ
+
+#include <iostream>
+#include <queue>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <utility>
+
+using namespace std;
+
+const int INF = 1e9;
+
+// Дирекции: вверх, право, вниз, лево
+const int DR[4] = {-1, 0, 1, 0};
+const int DC[4] = {0, 1, 0, -1};
+
+char moves[4] = {'U', 'R', 'D', 'L'};
+
+string find_path(pair<int,int>& start, pair<int,int>& finish, vector<vector<pair<int,int>>>& parents1) {
+    string path;
+    pair<int, int> cur = {finish.first, finish.second};
+
+    while(cur != start) {
+        pair<int, int> prev = parents1[cur.first][cur.second];
+        for(int i = 0; i < 4; ++i) {
+            if(cur.first == prev.first + DR[i] && cur.second == prev.second + DC[i]) {
+                path += moves[i];
+                break;
+            }
+        }
+        cur = prev;
+    }
+    reverse(path.begin(), path.end());
+    return path;
+}
+
+void bfs_no_key (pair<int,int>& start, vector<string>& lab, int n, int m, vector<vector<int>>& dist1, vector<vector<pair<int, int>>>& parents1) {
+    dist1[start.first][start.second] = 0;
+    
+    queue<pair<int,int>> q;
+
+    q.push(start);
+
+    while(!q.empty()) {
+        pair<int, int> cur = q.front();
+
+        q.pop();
+
+        for(int i = 0; i < 4; ++i) {
+            int nr = cur.first + DR[i];
+            int nc = cur.second + DC[i];
+            if(nr >= 0 && nr < n && nc >= 0 && nc < m && lab[nr][nc] != '#' && lab[nr][nc] != 'D' && dist1[nr][nc] == INF) {
+                q.push({nr, nc});
+                parents1[nr][nc] = cur;
+                dist1[nr][nc] = dist1[cur.first][cur.second] + 1;
+            }
+        }
+    }
+}
+
+void bfs_key (pair<int,int>& start, vector<string>& lab, int n, int m, vector<vector<int>>& dist1, vector<vector<pair<int, int>>>& parents1) {
+    dist1[start.first][start.second] = 0;
+    
+    queue<pair<int,int>> q;
+
+    q.push(start);
+
+    while(!q.empty()) {
+        pair<int, int> cur = q.front();
+
+        q.pop();
+
+        for(int i = 0; i < 4; ++i) {
+            int nr = cur.first + DR[i];
+            int nc = cur.second + DC[i];
+            if(nr >= 0 && nr < n && nc >= 0 && nc < m && lab[nr][nc] != '#' && dist1[nr][nc] == INF) {
+                q.push({nr, nc});
+                parents1[nr][nc] = cur;
+                dist1[nr][nc] = dist1[cur.first][cur.second] + 1;
+            }
+        }
+    }
+}
+
+
+int main() {
+    int n, m;
+
+    cin >> n >> m;
+
+    vector<string> lab(n);
+    pair<int,int> start, finish, key, door;
+
+    for(int i = 0; i < n; ++i) {
+        cin >> lab[i];
+        for(int j = 0; j < m; ++j) {
+            if(lab[i][j] == 'S') {
+                start = {i, j};
+            }
+            else if(lab[i][j] == 'F') {
+                finish = {i, j};
+            }
+            else if(lab[i][j] == 'K') {
+                key = {i, j};
+            }
+            else if(lab[i][j] == 'D') {
+                door = {i, j};
+            }
+        }
+    }
+
+    // считаем расстояния до всех точек без прохода через дверь
+    vector<vector<int>> dist1(n, vector<int>(m, INF));
+    vector<vector<pair<int, int>>> parents1(n, vector<pair<int,int>>(m, {-1, -1}));
+    bfs_no_key(start, lab, n, m, dist1, parents1);
+
+    int fin_first = dist1[finish.first][finish.second];
+    int key_fist = dist1[key.first][key.second] + 1;
+
+    vector<vector<int>> dist2(n, vector<int>(m, INF));
+    vector<vector<pair<int, int>>> parents2(n, vector<pair<int,int>>(m, {-1, -1}));
+    bfs_key(key, lab, n, m, dist2, parents2);
+
+    int key_fin = dist2[finish.first][finish.second];
+
+    if(fin_first <= key_fist + key_fin) {
+        if (fin_first != INF) {
+            cout << fin_first << endl;
+            cout << find_path(start, finish, parents1) << endl;
+        }
+        else {
+            cout << -1 << endl;
+        }
+    }
+    else {
+        cout << key_fist + key_fin << endl;
+        cout << find_path(start, key, parents1) << 'P' << find_path(key, finish, parents2) << endl;
+    }
+}
+
+10.3.E.Выход из лабиринта: цветные ключи
+// "Неверное решение". Не смог найти оптимальное решение, публикую как есть.
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
+
+using namespace std;
+
+struct State {
+    int x, y;
+    int keys;
+    string path;
+};
+
+void backtrace_corr (pair<int,int>& finish, string& path, vector<string>& labyrinth, unordered_map<char, char>& key_to_door) {
+    pair<int,int> current = finish;
+
+    int directions[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    char move[4] = {'R', 'D', 'L', 'U'};
+
+    unordered_set<char> visited_dors;
+
+    for(int i = path.size() - 1; i >= 0; --i) {
+        for(int j = 0; j < 4; ++j) {
+            if(path[i] == move[j]) {
+                current.first -= directions[j][0];
+                current.second -= directions[j][1];
+                char cell = labyrinth[current.first][current.second];
+                if(cell >= 'A' && cell <= 'Z' && cell != 'F' && cell != 'S') {
+                    visited_dors.insert(cell);
+                }
+                if(cell >= 'a' && cell <= 'z') {
+                    char door = key_to_door[cell];
+                    if(visited_dors.find(door) != visited_dors.end()) {
+                        path.insert(i, "P");
+                    }
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    
+    vector<string> labyrinth(n);
+    pair<int, int> start, finish;
+    unordered_map<char, char> door_to_key;
+    unordered_map<char, char> key_to_door;
+    
+    for (int i = 0; i < n; ++i) {
+        cin >> labyrinth[i];
+        for (int j = 0; j < m; ++j) {
+            if (labyrinth[i][j] == 'S') start = {i, j};
+            if (labyrinth[i][j] == 'F') finish = {i, j};
+        }
+    }
+    
+    int k;
+    cin >> k;
+    for (int i = 0; i < k; ++i) {
+        char door, key;
+        cin >> door >> key;
+        door_to_key[door] = key;
+        key_to_door[key] = door;
+    }
+    
+    int directions[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    char move[4] = {'R', 'D', 'L', 'U'};
+    
+    queue<State> q;
+    unordered_set<string> visited;
+    
+    q.push({start.first, start.second, 0, ""});
+    visited.insert(to_string(start.first) + "," + to_string(start.second) + ",0");
+    
+    while (!q.empty()) {
+        State current = q.front();
+        q.pop();
+        
+        if (current.x == finish.first && current.y == finish.second) {
+            backtrace_corr(finish, current.path, labyrinth, key_to_door);
+            cout << current.path.length() << endl;
+            cout << current.path << endl;
+            return 0;
+        }
+        
+        for (int i = 0; i < 4; ++i) {
+            int nx = current.x + directions[i][0];
+            int ny = current.y + directions[i][1];
+            int nkeys = current.keys;
+            // bool keys_upd = false;
+            
+            if (nx < 0 || ny < 0 || nx >= n || ny >= m || labyrinth[nx][ny] == '#') continue;
+            
+            char cell = labyrinth[nx][ny];
+            
+            if (cell >= 'A' && cell <= 'Z' && cell != 'F' && cell != 'S') {
+                char key = door_to_key[cell];
+                if (!(nkeys & (1 << (key - 'a')))) continue;
+            }
+            
+            if (cell >= 'a' && cell <= 'z') {
+                // if(!(nkeys & (1 << (cell - 'a')))) keys_upd = true;
+                nkeys |= (1 << (cell - 'a'));
+            }
+            
+            string state = to_string(nx) + "," + to_string(ny) + "," + to_string(nkeys);
+            if (visited.find(state) == visited.end()) {
+                visited.insert(state);
+                // cout << state << endl;
+                string npath = current.path + move[i];
+                // if(keys_upd) {
+                //     npath += 'P';
+                // }
+                q.push({nx, ny, nkeys, npath});
+            }
+        }
+    }
+    cout << -1 << endl;
+    return 0;
+}
+
+10.3.F.Рисование прямоугольников
+Не решена
+10.3.G.Рисование прямоугольников - 2
+Не решена
+
+10.4. Алгоритм нахождения компонент связности в графе
+10.4.A Минимальное количество мостов
+
+#include <iostream>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+void dfs(vector<vector<int>>& adj, vector<bool>& visited, int start) {
+    stack<int> s;
+    s.push(start);
+    while(!s.empty()) {
+        int cur = s.top();
+        s.pop();
+        if(!visited[cur]) {
+            visited[cur] = true;
+            for(int neib: adj[cur]) {
+                if(!visited[neib]) {
+                    s.push(neib);
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<pair<int, int>> briges(m);
+    vector<vector<int>> adj(n + 1);
+
+    for(int i = 0; i < m; ++i) {
+        int a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    vector<int> new_briges;
+    vector<bool> visited(n+1, false);
+    
+    for(int i = 1; i <= n; ++i) {
+        if(!visited[i]) {
+            new_briges.push_back(i);
+            dfs(adj, visited, i);
+        }
+    }
+
+    cout << new_briges.size() - 1 << endl;
+    for(int i = 1; i < new_briges.size(); ++i) {
+        cout << new_briges[i - 1] << ' ' << new_briges[i] << endl;
+    }
+
+}
+
+10.5. Задача поиска кратчайшего пути в графе
+10.5.A.Маршрут курьера
+// Неверное решение. Не смог локализовать ошибку, публикую как есть
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+#include <algorithm>
+
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int to;
+    int weight;
+};
+
+// Используем тип псевдонима для списка смежности
+using Graph = std::vector<std::vector<Edge>>;
+
+// Функция для алгоритма Дейкстры с восстановлением пути
+vector<int> dijkstra_with_path(int start, int end, const vector<vector<Edge>>& graph) {
+    int n = graph.size();
+    vector<int> dist(n, INF); // Вектор для хранения минимальных расстояний
+    vector<int> prev(n, -1);  // Вектор для хранения предшественников
+    dist[start] = 0;
+
+    // Приоритетная очередь для хранения пар (расстояние, вершина)
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        int d = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (d > dist[u]) continue;
+
+        for (const auto& edge : graph[u]) {
+            int v = edge.to;
+            int weight = edge.weight;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                prev[v] = u;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+    // Восстанавливаем путь от конечной вершины к начальной
+    vector<int> path;
+    for(int at = end; at != -1; at = prev[at]) {
+        path.push_back(at);
+    }
+    reverse(path.begin(), path.end());
+
+    // Если путь не ведёт к начальной вершине, возвращаем пустой путь
+    if(path[0] != start) {
+        return {};
+    }
+
+    return path;
+}
+
+// Функция для алгоритма Дейкстры
+std::vector<int> dijkstra(const Graph& graph, int start) {
+    int n = graph.size();
+    std::vector<int> dist(n, INF); // Список расстояний
+    dist[start] = 0;
+
+    // Приоритетная очередь (минимальная куча)
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
+    pq.emplace(0, start);
+
+    while (!pq.empty()) {
+        int d = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        // Если текущее расстояние больше, пропускаем
+        if (d > dist[u]) continue;
+
+        for (const Edge& edge : graph[u]) {
+            int v = edge.to;
+            int weight = edge.weight;
+            
+            // Если найден более короткий путь
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.emplace(dist[v], v);
+            }
+        }
+    }
+
+    return dist;
+}
+
+
+int main() {
+    int n, m, V, O1, O2, O3;
+    cin >> n >> m >> V >> O1 >> O2 >> O3;
+    --V, --O1, --O2, --O3;
+
+    vector<vector<Edge>> graph(n);
+
+    for(int i = 0; i < m; ++i) {
+        int u, v, c;
+        cin >> u >> v >> c;
+        --u, --v;
+        graph[u].push_back({v, c});
+        graph[v].push_back({u, c});
+    }
+
+    vector<int> distV = dijkstra(graph, V);
+    vector<int> distO1 = dijkstra(graph, O1);
+    vector<int> distO2 = dijkstra(graph, O2);
+    vector<int> distO3 = dijkstra(graph, O3);
+
+    vector<int> orders = {O1, O2, O3};
+    int min_cost = INF;
+    vector<int> bect_path;
+
+    do
+    {
+        int current_cost = distV[orders[0]] + distO1[orders[1]] + distO2[orders[2]] + distO3[V];
+        if(current_cost < min_cost) {
+            min_cost = current_cost;
+            bect_path = {V, orders[0], orders[1], orders[2], V};
+        }
+    } while (next_permutation(orders.begin(), orders.end()));
+
+    vector<int> final_route;
+    reverse(bect_path.begin(), bect_path.end());
+
+    for(int i = 1; i < bect_path.size(); ++i) {
+        vector<int> path = dijkstra_with_path(bect_path[i - 1], bect_path[i], graph);
+        for(int i = 0; i < path.size(); ++i) {
+            if(final_route.empty() || i != 0) {
+                final_route.push_back(path[i]);
+            }
+        }
+    }
+    
+    cout << final_route.size() << endl;
+    for(int i = 0; i < final_route.size(); ++i) {
+        if(i != 0) {
+            cout << " " << final_route[i] + 1;
+        }
+        else {
+            cout << final_route[i] + 1;
+        }
+    }
+    cout << endl;  
+}
+
+10.5.B.Маршрут курьера: кикшеринг
+// Нет решения. Не смог решить задачу.
