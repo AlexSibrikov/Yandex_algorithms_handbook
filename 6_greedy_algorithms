@@ -1,0 +1,628 @@
+6.1. Задача «Размен»
+6.1.B Размен: 1, 5, 10, 20, 50
+
+#include <iostream>
+
+using namespace std;
+
+void outf(int cnt, int n) {
+    if (cnt == 0) {
+        cout << n;
+    }
+    else {
+        cout << n << ' ';
+    }
+}
+
+int main() {
+    int n, cnt = 0, n2;
+    cin >> n;
+
+    n2 = n;
+
+    while(true) {
+        if(n >= 50) {
+            n -= 50;
+            ++cnt;
+        }
+        else if(n >= 20) {
+            n -= 20;
+            ++cnt;
+        }
+        else if(n >= 10) {
+            n -= 10;
+            ++cnt;
+        }
+        else if(n >= 5) {
+            n -= 5;
+            ++cnt;
+        }
+        else if(n >= 1) {
+            n -= 1;
+            ++cnt;
+        }
+        else {
+            break;
+        }
+    }
+
+    cout << cnt << endl;
+
+    n = n2;
+
+    while(true) { 
+         if(n >= 50) {
+            n -= 50;
+            --cnt;
+            outf(cnt, 50);
+        }
+        else if(n >= 20) {
+            n -= 20;
+            --cnt;
+            outf(cnt, 20);
+        }
+        else if(n >= 10) {
+            n -= 10;
+            --cnt;
+            outf(cnt, 10);
+        }
+        else if(n >= 5) {
+            n -= 5;
+            --cnt;
+            outf(cnt, 5);
+        }
+        else if(n >= 1) {
+            n -= 1;
+            --cnt;
+            outf(cnt, 1);
+        }
+        else {
+            break;
+        }
+    }
+}
+
+6.2. Задача «Специи»
+6.2.A Специи
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <utility>
+#include <cstdio>
+
+using namespace std;
+
+bool compare (const pair<int, int>& a, const pair<int, int>& b) {
+    return (double)a.first / a.second > (double)b.first / b.second;
+}
+  
+int main() {
+    int n, capacity;
+    double cash = 0;
+    std::cin >> n >> capacity;
+    vector<pair<int, int>> data(n);
+    for (int i = 0; i != n; ++i) {
+        int price, weight;
+        std::cin >> price >> weight;
+        pair<int, int> el = {price, weight};
+        data[i] = el;
+    }
+
+    sort(data.begin(), data.end(), compare);
+
+    vector<pair<int, int>> data_s(n);
+
+    for(auto e: data) {
+        data_s.push_back(e);
+    }
+ 
+    while (capacity > 0 && !data_s.empty()) {
+        if (std::get<1>(data_s[0]) <= capacity) {
+            capacity -= std::get<1>(data_s[0]);
+            cash += std::get<0>(data_s[0]);
+            data_s.erase(data_s.begin());
+        }
+        else {
+            cash += std::get<0>(data_s[0]) * (double)capacity / get<1>(data_s[0]);
+            break;
+        }
+    }
+    std::printf("%.3f\n", cash);
+}
+
+6.2.B Сувениры
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n, s;
+
+    cin >> n >> s;
+    vector<int> data(n);
+
+    for(int i = 0; i < n; ++i) {
+        int si;
+        cin >> si;
+        data[i] = si;
+    }
+
+    sort(data.begin(), data.end());
+
+    int i = 0;
+
+    for(int s_now = 0; s_now <= s && i < data.size();) {
+        s_now += data[i];
+        if (s_now <= s) {
+            ++i;
+        }
+    }
+
+    cout << i << endl;
+}
+
+6.3. Задача «Рекламная кампания»
+6.3.A Рекламная кампания
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n;
+    long long rev = 0;
+    cin >> n;
+
+    vector<long long> prices(n);
+    vector<long long> clicks(n);
+
+    for(int i = 0; i != n; ++i) {
+        int p;
+        cin >> p;
+        prices[i] = p;
+    }
+
+    for(int i = 0; i != n; ++i) {
+        int c;
+        cin >> c;
+        clicks[i] = c;
+    }
+
+    sort(prices.begin(), prices.end());
+    sort(clicks.begin(), clicks.end());
+
+
+    while (!prices.empty() || !clicks.empty()) {
+        long long p = prices.back();
+        long long c = clicks.back();
+        rev += p * c;
+        prices.pop_back();
+        clicks.pop_back();
+    }
+    // vector<int> prices_s;
+    // vector<int> clicks_s;
+
+    // for(int e: prices) {
+    //     prices_s.push_back(e);
+    // }
+
+    // for(int e: clicks) {
+    //     clicks_s.push_back(e);
+    // }
+
+    // prices.erase(prices.begin(), prices.end());
+    // clicks.erase(clicks.begin(), clicks.end());
+
+    // for(int i = n; i >= 0 ; --i) {
+    //     long e = prices_s[i] * clicks_s[i];
+    //     rev += e;
+    // }
+    cout << rev << endl;
+}
+
+6.3.B Реклама на билбордах
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool operate(const pair<int,int>& a, const pair<int,int>& b) {
+    return a.first > b.first;
+}
+
+int main() {
+    int n, k, w;
+    cin >> n >> k >> w;
+    vector<pair<int, int>> data(k);
+    for (int i = 0; i < k; ++i) {
+        int ci, wi;
+        cin >> ci >> wi;
+        pair<int,int> raw = {ci, wi};
+        data[i] = raw;
+    }
+    sort(data.begin(), data.end(), operate);
+
+    int inv = n * w;
+    long rev = 0;
+
+    for(auto e: data) {
+        if (e.second <= inv) {
+            inv -= e.second;
+            rev += e.first * e.second;
+        }
+        else {
+            rev += e.first * inv;
+            break;
+        }
+    }
+
+    cout << rev << endl;
+
+}
+
+6.4. Задача «Сбор подписей»
+6.4.A Сбор подписей
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool compare(const pair<int,int>& a, const pair<int,int>& b) {
+    return a.second < b.second;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<pair<int,int>> data(n);
+    for(int i = 0; i < n; ++i) {
+        int l, r;
+        cin >> l >> r;
+        data[i] = {l, r};
+    }
+
+    sort(data.begin(), data.end(), compare);
+
+    vector<pair<int,int>> data_s;
+
+    vector<int> ans;
+
+    for(auto e: data) {
+        data_s.push_back(e);
+    }
+
+    data.erase(data.begin(), data.end());
+
+    int i = 0;
+    // int next = data_s[i].second;
+    // ans.push_back(next);
+
+    while(i < n) {
+        int next = data_s[i].second;
+        ans.push_back(next);
+//        cout << i << ' ' << next << endl;
+        if (i == n - 1) {
+            break;
+        }
+        for(int j = i; j < n; ++j) {
+            if(next >= data_s[j].first) {
+                ++i;
+//                cout << i << endl;
+            }
+            else {
+                break;
+            }
+        }
+    }
+
+    cout << ans.size() << endl;
+
+    bool is_first = true;
+    for(auto e: ans) {
+        if(is_first) {
+            cout << e;
+            is_first = false;
+        }
+        else {
+            cout << ' ' << e;
+        }
+    }
+}
+
+6.4.B Покрытие точек отрезками одинаковой длины
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n, l;
+    cin >> n >> l;
+
+    vector<int> data(n);
+    for(int i = 0; i < n; ++i) {
+        int x;
+        cin >> x;
+        data[i] = x;
+    }
+
+    sort(data.begin(), data.end());
+    vector<int> data_s;
+
+    int count = 1;
+
+    for(auto e: data) {
+        data_s.push_back(e);
+    }
+
+    data.erase(data.begin(), data.end());
+
+    int min = data_s.front();
+
+    for(int i = 0; i < n; ++i) {
+        int diff = abs(min - data_s[i]);
+        if(diff > l) {
+            min = data_s[i];
+            ++count;
+        }
+    }
+
+    cout << count << endl;
+}
+
+6.4.C Минимальная суммарная длина отрезков
+
+#include <iostream>
+#include <vector>
+#include <set>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    set<int> data_s;
+
+    while(n--) {
+        int x;
+        cin >> x;
+        data_s.insert(x);
+    }
+
+    if(data_s.size() <= k) {
+        cout << 0 << endl;
+        return 0;
+    }
+
+    int maxline = abs(*data_s.begin() - *(data_s.rbegin()));
+
+//    cout << maxline << endl;
+
+    map<int, int> intervals;
+    bool first = true;
+    int curr = 0;
+    for(auto e: data_s) {
+        if (first) {
+            curr = e;
+            first = false;
+        }
+        else {
+            ++intervals[abs(e - curr)];
+            curr = e;
+        }
+    }
+
+    int i = k - 1;
+    int sum = 0;
+    auto iterend = intervals.rbegin();
+    while (i != 0) {
+        if(i >= iterend->second) {
+            i -= iterend->second;
+            sum += iterend->first * iterend->second;
+            if (iterend != intervals.rend()) {
+                ++iterend;
+            }
+            else {
+               sum += iterend->first * i;
+               break; 
+            }
+            
+        }
+        else {
+            sum += iterend->first * i;
+            break;
+        }
+    }
+
+    // for(auto e: intervals) {
+    //     cout << e.first << ' ' << e.second << endl;
+    // }
+
+    cout << maxline - sum << endl;
+}
+
+6.5. Задача «Количество призов»
+6.5.A Количество призов
+
+#include <iostream>
+
+using namespace std;
+
+bool solve_sum(long long k, int n) {
+    return ((k * (k + 1)) / 2) <= n;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    int from = 0, to = n;
+    long long k = 1;
+
+    while (from < to) {
+        k = (to + from) / 2;
+        if (solve_sum(k, n)) {
+            from = k + 1;
+        }
+        else {
+            to = k;
+        }
+    }
+    cout << --from << endl;
+    // cout << k << endl;
+    // cout << to << endl;
+}
+
+6.6. Задача «Максимальный оклад»
+6.6.A Максимальный оклад
+// Чекер Яндекса не принимает решение, хотя по моим тестам решение верное.
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+bool is_better(int a, int b) {
+    string res1, res2;
+    res1.append(to_string(a));
+    res1.append(to_string(b));
+    res2.append(to_string(b));
+    res2.append(to_string(a));
+    if(res1 > res2) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> data(n);
+    for(int i = 0; i < n; ++i) {
+        int val;
+        cin >> val;
+        data[i] = val;
+    }
+
+//    sort(data.rbegin(), data.rend());
+
+    string result;
+
+    bool is_first = true;
+    bool last;
+
+    int current;
+
+    while (data.size() > 0) {
+
+        int ind = 0;
+        current = data[ind];
+
+        for(int i = 1; i < data.size(); ++i) {
+
+            last = is_better(current, data[i]);
+            if (!last) {
+                current = data[i];
+                ind = i;
+            }
+
+        }
+        result.append(to_string(current));
+        data.erase(data.begin() + ind);
+    }
+
+    cout << result << endl;
+    
+}
+
+6.6.B Теннисный турнир
+// Чекер Яндекса не принимает решение, хотя по моим тестам решение верное.
+
+#include <iostream>
+#include <set>
+
+using namespace std;
+
+int main() {
+    int n, k, mid;
+    cin >> n >> k;
+
+    set<int> dataset;
+    for(int i = 0; i < n; ++i) {
+        int val;
+        cin >> val;
+        dataset.insert(val);
+        if(i == k - 1) {
+            mid = val;
+        }
+    }
+
+    int less = 0, games = 0;
+
+    for(auto e: dataset) {
+        if (e < mid) {
+            ++less;
+        }
+    }
+
+    while (less > 0) {
+        ++games;
+        --less;
+        if (less % 2 == 1 && n % 2 == 1) {
+            ++(less /= 2);
+        }
+        else {
+            less /= 2;
+        }
+        n -= n/2;
+    }
+
+    cout << games << endl;
+}
+
+6.6.C Расстановка королей на шахматной доске
+
+#include <iostream>
+
+using namespace std;
+
+int check_remainder(int n) {
+    if (n % 3 > 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int solve(int r, int c) {
+    int ver = int(r/3) + check_remainder(r);
+    int hor = int(c/3) + check_remainder(c);
+    return (r * c) - (ver * hor);
+}
+
+int main() {
+    int r, c;
+    cin >> r >> c;
+    cout << solve(r, c) << endl;
+}
